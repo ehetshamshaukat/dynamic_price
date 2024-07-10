@@ -37,7 +37,7 @@ class ModelTraining:
                 model.fit(xtrain,ytrain)
                 predicted_value=model.predict(xtest)
                 r2=r2_score(true_value,predicted_value)
-                model_report[model_name]=r2
+                model_report[model_name]=r2*100
 
             best_model_name=max(model_report,key=model_report.get)
             best_model=models[best_model_name]

@@ -23,13 +23,21 @@ class DataTransformation:
             numerical_columns = ['number_of_riders', 'number_of_drivers', 'number_of_past_rides',
                                  'average_ratings', 'expected_ride_duration']
             categorical_columns = ['location_category', 'customer_loyalty_status', 'time_of_booking', 'vehicle_type']
+
+            location_category_list = ['Urban', 'Suburban', 'Rural']
+            loyalty_status_list = ['Regular','Silver', 'Gold']
+            time_of_booking_list = ['Morning', 'Afternoon', 'Evening','Night']
+            vehicle_list = ['Economy','Premium']
+
             numerical_column_pipeline = Pipeline(steps=[
-                ("simpleImputer",SimpleImputer(strategy="mean")),
+                ("simpleImputer",SimpleImputer(strategy="median")),
                 ("standardscaler", StandardScaler())
             ])
+
             categorical_column_pipeline = Pipeline(steps=[
                 ("simpleImputer",SimpleImputer(strategy="most_frequent")),
-                ("ordinalencoder",OrdinalEncoder()),
+                ("ordinalencoder",OrdinalEncoder(categories=[location_category_list,loyalty_status_list,
+                                                             time_of_booking_list,vehicle_list])),
                 ("standardscaler", StandardScaler())
             ])
 
@@ -61,7 +69,7 @@ class DataTransformation:
 
             # loading and saving file in pickle format
             transform = self.data_transformation()
-            save_file_as_pickle(self.data_Transformation_pickle.data_transformation_pickle_path, transform)
+
 
             # transforming data
             transform_xtrain = transform.fit_transform(xtrain)
@@ -70,7 +78,7 @@ class DataTransformation:
             # concatenation of transform data with y feature
             transform_train_dataset = np.c_[transform_xtrain, np.array(ytrain)]
             transform_test_dataset = np.c_[transform_xtest, np.array(ytest)]
-
+            save_file_as_pickle(self.data_Transformation_pickle.data_transformation_pickle_path, transform)
             # returning transformed dataset
             return transform_train_dataset, transform_test_dataset
 
